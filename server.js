@@ -91,6 +91,7 @@ app.post('/auth/login', async (req, res) => {
 
 // Apply auth to protected routes
 app.use('/ingredients', jwtAuth);
+app.use('/ingredient/:ingredientId', jwtAuth);
 app.use('/updateingredient', jwtAuth);
 app.use('/tables', jwtAuth);
 app.use('/orders', jwtAuth);
@@ -103,6 +104,17 @@ app.get('/ingredients', async (req, res) => {
     console.error('Error in /ingredients:', err);
     res.status(500).send(err.message);
   }
+});
+
+app.get('ingredient/:ingredientId', async (req, res) => {
+  const { ingredientId } = req.params;  
+  try {
+    const result = await pool.query('SELECT sal."fn_GetIngredientById"($1)', [ingredientId]);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error in /ingredient/:ingredientId:', err);
+    res.status(500).send(err.message);
+  } 
 });
 
 app.post('/updateingredient', async (req, res) => {
