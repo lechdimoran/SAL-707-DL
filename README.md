@@ -30,14 +30,19 @@ A simple Node.js API using Express and PostgreSQL.
 
 ## API Endpoints
 
-- `GET /ingredients`: Get all ingredients (requires API key)
-- `POST /updateingredient`: Update an ingredient (requires API key)
-- `GET /tables`: List database tables (requires API key)
-- `GET /orders`: Get all orders (requires API key)
-- `POST /orders`: Create a new order (requires API key)
+- `POST /auth/login`: Login with {username, password}, returns JWT token
+- `GET /ingredients`: Get all ingredients (requires JWT in Authorization header)
+- `POST /updateingredient`: Update an ingredient (requires JWT)
+- `GET /tables`: List database tables (requires JWT)
+- `GET /orders`: Get all orders (requires JWT)
+- `POST /orders`: Create a new order (requires JWT)
+
+## Authentication
+
+Use `POST /auth/login` to get a JWT token. Include it in requests as `Authorization: Bearer <token>`.
 
 ## Security
 
-All endpoints except the root require an API key in the `X-API-Key` header. Rate limiting is enabled (100 requests per 15 minutes per IP).
+Rate limiting (100 requests/15min/IP), Helmet headers, CORS enabled.
 
 For production on Render, set environment variables in the service dashboard.
