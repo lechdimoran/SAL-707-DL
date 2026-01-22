@@ -106,7 +106,7 @@ app.get('/ingredients', async (req, res) => {
   }
 });
 
-app.get('ingredient/:ingredientId', async (req, res) => {
+app.get('/ingredient/:ingredientId', async (req, res) => {
   const { ingredientId } = req.params;  
   try {
     const result = await pool.query('SELECT sal."fn_GetIngredientById"($1)', [ingredientId]);
