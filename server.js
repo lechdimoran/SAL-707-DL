@@ -18,11 +18,10 @@ process.on('exit', (code) => {
 });
 
 const app = express();
+app.set('trust proxy', 1);  // Render uses single proxy layer
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
-app.enable('trust proxy');
-app.set('trust proxy', 10);
 
 
 // Rate limiting
