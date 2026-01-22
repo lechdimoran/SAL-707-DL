@@ -1,8 +1,8 @@
-//const express = require('express');
+const express = require('express');
 const { Pool } = require('pg');
 const helmet = require('helmet');
 const cors = require('cors');
-//const rateLimit = require('express-rate-limit');
+const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
@@ -17,12 +17,12 @@ process.on('exit', (code) => {
   console.log('Process exited with code', code);
 });
 
-//const app = express();
-//app.use(helmet());
-//app.use(cors());
-//app.use(express.json());
-//app.enable('trust proxy');
-//app.set('trust proxy', 1);
+const app = express();
+app.use(helmet());
+app.use(cors());
+app.use(express.json());
+app.enable('trust proxy');
+app.set('trust proxy', 10);
 
 
 // Rate limiting
