@@ -1,5 +1,8 @@
 const express = require('express');
 const { Pool } = require('pg');
+const helmet = require('helmet');
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 // Handle unhandled promise rejections
@@ -13,7 +16,26 @@ process.on('exit', (code) => {
 });
 
 const app = express();
+app.use(helmet());
+app.use(cors());
 app.use(express.json());
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.'
+});
+app.use(limiter);
+
+// API Key authentication middleware
+const apiKeyAuth = (req, res, next) => {
+  const apiKey = req.headers['x-api-key'];
+  if (!apiKey || apiKey !== process.env.API_KEY) {
+    return res.status(401).json({ error: 'Unauthorized: Invalid API Key' });
+  }
+  next();
+};
 
 const pool = new Pool({
   host: process.env.DB_HOST,
@@ -35,6 +57,12 @@ const pool = new Pool({
 })();
 
 // Routes
+
+// Apply auth to protected routes
+app.use('/ingredients', apiKeyAuth);
+app.use('/updateingredient', apiKeyAuth);
+app.use('/tables', apiKeyAuth);
+app.use('/orders', apiKeyAuth);
 
 app.get('/ingredients', async (req, res) => {
   try {

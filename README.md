@@ -21,7 +21,7 @@ A simple Node.js API using Express and PostgreSQL.
      );
      ```
 
-3. Update `.env` file with your PostgreSQL credentials.
+3. Update `.env` file with your PostgreSQL credentials and API key.
 
 4. Run the server:
    ```
@@ -30,10 +30,14 @@ A simple Node.js API using Express and PostgreSQL.
 
 ## API Endpoints
 
-- `GET /`: Welcome message
-- `GET /orders`: Get all orders
-- `POST /orders`: Create a new order (JSON body: { customer_name, pizza_type, quantity })
+- `GET /ingredients`: Get all ingredients (requires API key)
+- `POST /updateingredient`: Update an ingredient (requires API key)
+- `GET /tables`: List database tables (requires API key)
+- `GET /orders`: Get all orders (requires API key)
+- `POST /orders`: Create a new order (requires API key)
 
-## Usage
+## Security
 
-Start the server and use tools like Postman or curl to test the endpoints.
+All endpoints except the root require an API key in the `X-API-Key` header. Rate limiting is enabled (100 requests per 15 minutes per IP).
+
+For production on Render, set environment variables in the service dashboard.
