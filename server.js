@@ -139,6 +139,41 @@ app.post('/updateingredient', async (req, res) => {
   }
 });
 
+app.get('/toppings', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT sal."fn_GetToppings"()');
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error in /toppings:', err);
+    res.status(500).send(err.message);
+  }
+});
+
+app.get('/pizzasizes', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT sal."fn_GetPizzaSizes"()');  
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error in /pizzasizes:', err);
+    res.status(500).send(err.message);
+  } 
+
+app.post('/insertpizzaorder', async (req, res) => {
+  /**
+   * @param {integer} Pizza_Size - Size ID
+   * @param {integer} Sum_Toppings - Number of Toppings
+   * @param {OrderDate} Order_Date - Date of Order
+   */
+  const {Pizza_Size, Sum_Toppings, Order_Date} = req.body;
+  try{
+    const OrderId = await pool.query('SELECT sal."fn_InsertPizzaOrder"($1, $2, $3) AS OrderId', [Pizza_Size, Sum_Toppings, Order_Date]);
+
+  }  catch (err){
+    console.error('Error in /insertpizzaorder:', err);
+    res.status(500).send(err.message);  
+  }
+  });
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
