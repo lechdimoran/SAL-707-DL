@@ -157,6 +157,7 @@ app.get('/pizzasizes', async (req, res) => {
     console.error('Error in /pizzasizes:', err);
     res.status(500).send(err.message);
   } 
+});
 
 app.post('/insertpizzaorder', async (req, res) => {
   /**
