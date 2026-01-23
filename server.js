@@ -161,19 +161,48 @@ app.get('/pizzasizes', async (req, res) => {
 
 app.post('/insertpizzaorder', async (req, res) => {
   /**
-   * @param {integer} Pizza_Size - Size ID
-   * @param {integer} Sum_Toppings - Number of Toppings
-   * @param {OrderDate} Order_Date - Date of Order
+   * @param {integer} sizeid - Pizza Size ID
+   * @param {array} toppingids - Array of Topping IDs
+   * @param {date} orderdate - Date of Order
    */
-  const {Pizza_Size, Sum_Toppings, Order_Date} = req.body;
-  try{
-    const OrderId = await pool.query('SELECT sal."fn_InsertPizzaOrder"($1, $2, $3) AS OrderId', [Pizza_Size, Sum_Toppings, Order_Date]);
-
-  }  catch (err){
-    console.error('Error in /insertpizzaorder:', err);
-    res.status(500).send(err.message);  
+  const { sizeid, toppingids, orderdate } = req.body;
+  
+  // Validate input
+  if (!sizeid || !Array.isArray(toppingids) || !orderdate) {
+    return res.status(400).json({ error: 'Invalid input: sizeid, toppingids (array), and orderdate are required' });
   }
-  });
+
+  try {
+    // Step 1: Create the pizza order and get the OrderId
+    const orderResult = await pool.query(
+      'SELECT sal."fn_InsertPizzaOrder"($1, $2, $3) AS "OrderId"',
+      [sizeid, toppingids.length, orderdate]
+    );
+    
+    if (!orderResult.rows || orderResult.rows.length === 0) {
+      return res.status(500).json({ error: 'Failed to create order' });
+    }
+
+    const orderId = orderResult.rows[0].OrderId;
+
+    // Step 2: Insert each topping for this order
+    for (const toppingId of toppingids) {
+      await pool.query(
+        'CALL sal."sp_InsertPizzaOrderItem"($1, $2)',
+        [orderId, toppingId]
+      );
+    }
+
+    res.json({ 
+      message: 'Pizza order created successfully',
+      orderId: orderId,
+      toppingCount: toppingids.length 
+    });
+  } catch (err) {
+    console.error('Error in /insertpizzaorder:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
