@@ -149,11 +149,12 @@ app.post('/insertingredient', async (req, res) => {
    * @param {money} King_Kold_Price - Supplier
    * @param {money} Piqua_Pizza_Price - Is active
    * @param {boolean} Topping - Category
+   * @param {boolean} Appetizer - Category
    */
-  const { Description, Pack_Size, Pack_Type, Small_Serving, Large_Serving, King_Kold_Price, Piqua_Pizza_Price, Topping } = req.body;
+  const { Description, Pack_Size, Pack_Type, Small_Serving, Large_Serving, King_Kold_Price, Piqua_Pizza_Price, Topping, Appetizer } = req.body;
 
   try {
-    const result = await pool.query('CALL sal."sp_InsertIngredient"($1, $2, $3, $4, $5, $6, $7, $8)', [Description, Pack_Size, Pack_Type, Small_Serving, Large_Serving, King_Kold_Price, Piqua_Pizza_Price, Topping]);
+    const result = await pool.query('CALL sal."sp_InsertIngredient"($1, $2, $3, $4, $5, $6, $7, $8, $9)', [Description, Pack_Size, Pack_Type, Small_Serving, Large_Serving, King_Kold_Price, Piqua_Pizza_Price, Topping, Appetizer]);
     res.json({ message: 'Ingredient inserted successfully' });
   } catch (err) {
     console.error('Error in /insertingredient:', err);
