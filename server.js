@@ -264,11 +264,11 @@ app.post('/insertappetizerorder', async (req, res) => {
   // Normalize to integers because sp_InsertAppetizerOrderItem expects integers
   const cleanedItems = items.map((item) => ({
     ingredientid: parseInt(item.ingredientid, 10),
-    total: parseInt(item.total, 10)
+    total: parseInt(item.quantity, 10)
   })).filter((item) => Number.isInteger(item.ingredientid) && Number.isInteger(item.total));
 
   if (cleanedItems.length === 0) {
-    return res.status(400).json({ error: 'Invalid items: each needs ingredientid and total' });
+    return res.status(400).json({ error: 'Invalid items: each needs ingredientid and quantity' });
   }
 
   const computedTotal = cleanedItems.reduce((sum, item) => sum + item.total, 0);
