@@ -119,20 +119,20 @@ app.get('/ingredient/:ingredientId', async (req, res) => {
 
 app.post('/updateingredient', async (req, res) => {
   /**
-   * @param {integer} Ingredient_Id - Ingredient ID
-   * @param {text} Description - Ingredient name
-   * @param {integer} Pack_Size - Description
-   * @param {text} Pack_Type - Quantity
-   * @param {numeric} Small_Serving - Unit
-   * @param {numeric} Large_Serving - Price
-   * @param {money} King_Kold_Price - Supplier
-   * @param {money} Piqua_Pizza_Price - Is active
-   * @param {boolean} Topping - Category
+   * @param {integer} IngredientId - Ingredient ID
+   * @param {text} inDescription - Ingredient name
+   * @param {integer} inPackSize - Description
+   * @param {text} inPackType - Quantity
+   * @param {numeric} inSmallServing - Unit
+   * @param {numeric} inLargeServing - Price
+   * @param {money} inKingKoldPrice - Supplier
+   * @param {money} inPiquaPizzaPrice - Is active
+   * @param {boolean} inTopping - Category
    * @param {boolean} Appetizer - Category
    */
-  const { Ingredient_Id, Description, Pack_Size, Pack_Type, Small_Serving, Large_Serving, King_Kold_Price, Piqua_Pizza_Price, Topping, Appetizer } = req.body;
+  const { IngredientId, inDescription, inPackSize, inPackType, inSmallServing, inLargeServing, inKingKoldPrice, inPiquaPizzaPrice, inTopping, inAppetizer } = req.body;
   try {
-    const result = await pool.query('CALL sal."sp_UpdateIngredient"($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)', [Ingredient_Id, Description, Pack_Size, Pack_Type, Small_Serving, Large_Serving, King_Kold_Price, Piqua_Pizza_Price, Topping, Appetizer]);
+    const result = await pool.query('CALL sal."sp_UpdateIngredient"($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)', [IngredientId, inDescription, inPackSize, inPackType, inSmallServing, inLargeServing, inKingKoldPrice, inPiquaPizzaPrice, inTopping, inAppetizer]);
     res.json({ message: 'Ingredient updated successfully' });
   } catch (err) {
     console.error('Error in /updateingredient:', err);
@@ -142,20 +142,20 @@ app.post('/updateingredient', async (req, res) => {
 
 app.post('/insertingredient', async (req, res) => {
   /**
-   * @param {text} Description - Ingredient name
-   * @param {integer} Pack_Size - Description
-   * @param {text} Pack_Type - Quantity
-   * @param {numeric} Small_Serving - Unit  
-   * @param {numeric} Large_Serving - Price
-   * @param {money} King_Kold_Price - Supplier
-   * @param {money} Piqua_Pizza_Price - Is active
-   * @param {boolean} Topping - Category
-   * @param {boolean} Appetizer - Category
+   * @param {text} inDescription - Ingredient name
+   * @param {integer} inPackSize - Description
+   * @param {text} inPackType - Quantity
+   * @param {numeric} inSmallServing - Unit  
+   * @param {numeric} inLargeServing - Price
+   * @param {money} inKingKoldPrice - Supplier
+   * @param {money} inPiquaPizzaPrice - Is active
+   * @param {boolean} inTopping - Category
+   * @param {boolean} inAppetizer - Category
    */
-  const { Description, Pack_Size, Pack_Type, Small_Serving, Large_Serving, King_Kold_Price, Piqua_Pizza_Price, Topping, Appetizer } = req.body;
+  const { inDescription, inPackSize, inPackType, inSmallServing, inLargeServing, inKingKoldPrice, inPiquaPizzaPrice, inTopping, inAppetizer } = req.body;
 
   try {
-    const result = await pool.query('CALL sal."sp_InsertIngredient"($1, $2, $3, $4, $5, $6, $7, $8, $9)', [Description, Pack_Size, Pack_Type, Small_Serving, Large_Serving, King_Kold_Price, Piqua_Pizza_Price, Topping, Appetizer]);
+    const result = await pool.query('CALL sal."sp_InsertIngredient"($1, $2, $3, $4, $5, $6, $7, $8, $9)', [inDescription, inPackSize, inPackType, inSmallServing, inLargeServing, inKingKoldPrice, inPiquaPizzaPrice, inTopping, inAppetizer]);
     res.json({ message: 'Ingredient inserted successfully' });
   } catch (err) {
     console.error('Error in /insertingredient:', err);
