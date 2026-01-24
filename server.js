@@ -272,7 +272,7 @@ app.post('/insertappetizerorder', async (req, res) => {
   }
 
   const computedTotal = cleanedItems.reduce((sum, item) => sum + item.total, 0);
-  const finalTotal = Number.isInteger(parseInt(ordertotal, 10)) ? parseInt(ordertotal, 10) : computedTotal;
+  const finalTotal = ordertotal !== undefined && ordertotal !== null ? parseFloat(ordertotal) : computedTotal;
 
   try {
     // Insert appetizer order header; adjust function name/params if your SQL signature differs
