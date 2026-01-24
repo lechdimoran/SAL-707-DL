@@ -128,10 +128,11 @@ app.post('/updateingredient', async (req, res) => {
    * @param {money} King_Kold_Price - Supplier
    * @param {money} Piqua_Pizza_Price - Is active
    * @param {boolean} Topping - Category
+   * @param {boolean} Appetizer - Category
    */
-  const { Ingredient_Id, Description, Pack_Size, Pack_Type, Small_Serving, Large_Serving, King_Kold_Price, Piqua_Pizza_Price, Topping } = req.body;
+  const { Ingredient_Id, Description, Pack_Size, Pack_Type, Small_Serving, Large_Serving, King_Kold_Price, Piqua_Pizza_Price, Topping, Appetizer } = req.body;
   try {
-    const result = await pool.query('CALL sal."sp_UpdateIngredient"($1, $2, $3, $4, $5, $6, $7, $8, $9)', [Ingredient_Id, Description, Pack_Size, Pack_Type, Small_Serving, Large_Serving, King_Kold_Price, Piqua_Pizza_Price, Topping]);
+    const result = await pool.query('CALL sal."sp_UpdateIngredient"($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)', [Ingredient_Id, Description, Pack_Size, Pack_Type, Small_Serving, Large_Serving, King_Kold_Price, Piqua_Pizza_Price, Topping, Appetizer]);
     res.json({ message: 'Ingredient updated successfully' });
   } catch (err) {
     console.error('Error in /updateingredient:', err);
