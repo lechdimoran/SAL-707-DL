@@ -238,6 +238,75 @@ app.post('/insertpizzaorder', async (req, res) => {
   }
 });
 
+app.get('/appetizerprices', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT sal."fn_GetAppetizerPrices"()');
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error in /appetizerprices:', err);
+    res.status(500).send(err.message);
+  }
+});
+
+app.post('/insertappetizerorder', async (req, res) => {
+  /**
+   * @param {date} appetizerorderdate - Date of Order
+   * @param {Array<{ingredientid:number,total:number}>} items - Line items with ingredient and line total
+   * @param {money} [ordertotal] - Optional overall total; if omitted, we sum item totals
+   */
+  const { appetizerorderdate, items, ordertotal } = req.body;
+
+  // Basic validation
+  if (!appetizerorderdate || !Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: 'Invalid input: appetizerorderdate and items[] are required' });
+  }
+
+  // Normalize and sum line totals
+  const cleanedItems = items.map((item) => ({
+    ingredientid: Number(item.ingredientid),
+    total: Number(item.total)
+  })).filter((item) => Number.isFinite(item.ingredientid) && Number.isFinite(item.total));
+
+  if (cleanedItems.length === 0) {
+    return res.status(400).json({ error: 'Invalid items: each needs ingredientid and total' });
+  }
+
+  const computedTotal = cleanedItems.reduce((sum, item) => sum + item.total, 0);
+  const finalTotal = Number.isFinite(Number(ordertotal)) ? Number(ordertotal) : computedTotal;
+
+  try {
+    // Insert appetizer order header; adjust function name/params if your SQL signature differs
+    const orderResult = await pool.query(
+      'SELECT sal."fn_InsertAppetizerOrder"($1, $2) AS "OrderId"',
+      [appetizerorderdate, finalTotal]
+    );
+
+    if (!orderResult.rows || orderResult.rows.length === 0) {
+      return res.status(500).json({ error: 'Failed to create order' });
+    }
+
+    const orderId = orderResult.rows[0].OrderId;
+
+    // Insert each appetizer line item
+    for (const item of cleanedItems) {
+      await pool.query(
+        'CALL sal."sp_InsertAppetizerOrderItem"($1, $2, $3)',
+        [orderId, item.ingredientid, item.total]
+      );
+    }
+
+    res.json({
+      message: 'Appetizer order created successfully',
+      orderId,
+      itemCount: cleanedItems.length,
+      orderTotal: finalTotal
+    });
+  } catch (err) {
+    console.error('Error in /insertappetizerorder:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+  
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
