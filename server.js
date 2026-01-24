@@ -163,6 +163,15 @@ app.post('/insertingredient', async (req, res) => {
   }
 });
 
+app.get('/appetizers', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT sal."fn_GetAppetizers"()');   
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error in /appetizers:', err);
+    res.status(500).send(err.message);
+  } 
+});
 
 app.get('/toppings', async (req, res) => {
   try {
