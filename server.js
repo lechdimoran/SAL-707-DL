@@ -261,18 +261,18 @@ app.post('/insertappetizerorder', async (req, res) => {
     return res.status(400).json({ error: 'Invalid input: appetizerorderdate and items[] are required' });
   }
 
-  // Normalize and sum line totals
+  // Normalize to integers because sp_InsertAppetizerOrderItem expects integers
   const cleanedItems = items.map((item) => ({
-    ingredientid: Number(item.ingredientid),
-    total: Number(item.total)
-  })).filter((item) => Number.isFinite(item.ingredientid) && Number.isFinite(item.total));
+    ingredientid: parseInt(item.ingredientid, 10),
+    total: parseInt(item.total, 10)
+  })).filter((item) => Number.isInteger(item.ingredientid) && Number.isInteger(item.total));
 
   if (cleanedItems.length === 0) {
     return res.status(400).json({ error: 'Invalid items: each needs ingredientid and total' });
   }
 
   const computedTotal = cleanedItems.reduce((sum, item) => sum + item.total, 0);
-  const finalTotal = Number.isFinite(Number(ordertotal)) ? Number(ordertotal) : computedTotal;
+  const finalTotal = Number.isInteger(parseInt(ordertotal, 10)) ? parseInt(ordertotal, 10) : computedTotal;
 
   try {
     // Insert appetizer order header; adjust function name/params if your SQL signature differs
@@ -291,7 +291,7 @@ app.post('/insertappetizerorder', async (req, res) => {
     for (const item of cleanedItems) {
       await pool.query(
         'CALL sal."sp_InsertAppetizerOrderItem"($1, $2, $3)',
-        [orderId, item.ingredientid, item.total]
+        [parseInt(orderId, 10), item.ingredientid, item.total]
       );
     }
 
