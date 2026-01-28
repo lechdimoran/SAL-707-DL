@@ -72,7 +72,7 @@ const pool = new Pool({
 app.post('/auth/login', async (req, res) => {
   const { username, password } = req.body;
   try {
-    const result = await pool.query('SELECT id, username, password_hash FROM sal.users WHERE username = $1', [username]);
+    const result = await pool.query('SELECT * FROM sal."fn_GetUserInfo"($1)', [username]);
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -82,7 +82,8 @@ app.post('/auth/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
     const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
+    const userrole = user.user_role_description;
+    res.json({ token, userrole });
   } catch (err) {
     console.error('Error in /auth/login:', err);
     res.status(500).json({ error: 'Internal server error' });
