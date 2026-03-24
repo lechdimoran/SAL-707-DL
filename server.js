@@ -308,7 +308,7 @@ app.post('/insertappetizerorder', async (req, res) => {
   }
 });
 
-app.get('/pizzaorderlist/', async (req, res) => {
+app.get('/pizzaorderlist', async (req, res) => {
   try {
     const result = await pool.query('SELECT sal."vw_PizzaOrderList"()'); 
     res.json(result.rows);
