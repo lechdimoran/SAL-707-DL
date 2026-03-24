@@ -307,6 +307,16 @@ app.post('/insertappetizerorder', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+app.get('/pizzaorderlist/', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT sal."vw_PizzaOrderList"()'); 
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error in /pizzaorderlist:', err);
+    res.status(500).send(err.message);
+  }
+});  
   
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
