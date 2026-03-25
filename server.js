@@ -310,7 +310,7 @@ app.post('/insertappetizerorder', async (req, res) => {
 
 app.get('/pizzaorderlist', async (req, res) => {
   try {
-    const result = await pool.query('SELECT sal."vw_PizzaOrderList"()'); 
+    const result = await pool.query('SELECT * FROM sal."vw_PizzaOrdersList"'); 
     res.json(result.rows);
   } catch (err) {
     console.error('Error in /pizzaorderlist:', err);
